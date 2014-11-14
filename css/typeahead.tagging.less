@@ -8,10 +8,17 @@ div.tagging_wrapper {
             .btn;
             .btn-primary;
             .btn-xs;
+            cursor: default;
             margin-right: 2px;
             span.tagging_delete_tag {
-                margin-left: 5px;
+                margin-left: 2px;
+                padding: 4px 2px;
                 color: @text-color;
+                cursor: pointer;
+            }
+            span.tagging_delete_tag:hover,
+            span.tagging_delete_tag:active {
+                color: lighten(@text-color, 30%);
             }
         }
         li.tagging_li_new {

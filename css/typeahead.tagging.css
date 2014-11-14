@@ -6274,6 +6274,7 @@ div.tagging_wrapper ul.tagging_ul li.tagging_li {
   font-size: 12px;
   line-height: 1.5;
   border-radius: 3px;
+  cursor: default;
   margin-right: 2px;
 }
 div.tagging_wrapper ul.tagging_ul li.tagging_li:focus,
@@ -6350,8 +6351,14 @@ div.tagging_wrapper ul.tagging_ul li.tagging_li .badge {
   background-color: #ffffff;
 }
 div.tagging_wrapper ul.tagging_ul li.tagging_li span.tagging_delete_tag {
-  margin-left: 5px;
+  margin-left: 2px;
+  padding: 4px 2px;
   color: #333333;
+  cursor: pointer;
+}
+div.tagging_wrapper ul.tagging_ul li.tagging_li span.tagging_delete_tag:hover,
+div.tagging_wrapper ul.tagging_ul li.tagging_li span.tagging_delete_tag:active {
+  color: #808080;
 }
 div.tagging_wrapper ul.tagging_ul li.tagging_li_new {
   display: inline;

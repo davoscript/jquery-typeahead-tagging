@@ -23,11 +23,11 @@
 if (!Array.prototype.indexOf) {
     Array.prototype.indexOf = function (searchElement, fromIndex) {
         var k;
-        if (this == null) {
+        if (this === null) {
             throw new TypeError('"this" is null or not defined');
         }
         var O = Object(this);
-        var len = O.length >>> 0;
+        var len = O.length >>> 0; // jshint ignore:line
         if (len === 0) {
             return -1;
         }
@@ -41,7 +41,6 @@ if (!Array.prototype.indexOf) {
         }
         k = Math.max(n >= 0 ? n : len - Math.abs(n), 0);
         while (k < len) {
-            var kValue;
             if (k in O && O[k] === searchElement) {
                 return k;
             }
@@ -82,6 +81,9 @@ TypeaheadTaggingPlugin.prototype.add_tag = function (value) {
     if (this.add_to_value(value)) {
         this.append_li(value);
     }
+
+    $(this.input).typeahead('val', '');
+
 };
 
 TypeaheadTaggingPlugin.prototype.add_to_value = function (value) {
@@ -109,11 +111,18 @@ TypeaheadTaggingPlugin.prototype.append_li = function (value) {
     // takes a string value and appends it as a new tag
 
     var li,             // the new li element
-        tagging_li_new; // the li element holding the typeahead input
+        tagging_li_new, // the li element holding the typeahead input
+        span;           // the span, that is clicked to delete a tag
 
     // create the new list item
+    span = document.createElement('span');
+    span.classList.add('tagging_delete_tag');
+    span.setAttribute('data-class', 'tagging_delete_tag');
+    span.textContent = 'x';
+
     li = document.createElement('li');
-    li.innerHTML = value + '<span class="tagging_delete_tag" data-class="tagging_delete_tag">x</span>';
+    li.textContent = value;
+    li.appendChild(span);
     li.classList.add('tagging_li');
     li.setAttribute('data-value', value);
     // append it to the list
@@ -123,6 +132,9 @@ TypeaheadTaggingPlugin.prototype.append_li = function (value) {
     } else {
         this.element.parentElement.querySelector('[data-class="tagging_ul"]').appendChild(li);
     }
+
+    // assign click event to span, that should remove the tag
+    span.onclick = this.handle_click_delete();
 
 };
 
@@ -150,8 +162,8 @@ TypeaheadTaggingPlugin.prototype.create_li_with_input = function () {
     // save the input instance on the plugin
     this.input = li.querySelector('[data-class="tagging_li_new_input"]');
     // assign event handlers to the input
-    this.input.onkeyup = this.handle_keyup();
-    this.input.onkeydown = this.handle_keydown();
+    this.input.onkeyup = this.handle_input_keyup();
+    this.input.onkeydown = this.handle_input_keydown();
 
 };
 
@@ -202,7 +214,6 @@ TypeaheadTaggingPlugin.prototype.delete_tag = function (value) {
     // removes the tag and the value from the original input
     this.delete_from_value(value);
     this.element.parentElement.querySelector('[data-value="' + value + '"]').remove();
-    console.log(this.element.value)
 
 };
 
@@ -214,7 +225,24 @@ TypeaheadTaggingPlugin.prototype.get_taglist = function () {
 
 };
 
-TypeaheadTaggingPlugin.prototype.handle_keyup = function (e) {
+TypeaheadTaggingPlugin.prototype.handle_click_delete = function () {
+
+    // handles clicking of the span, that removes a tag
+    var handler;    // the handler, that executes the deletion of the tag
+    var that = this;
+
+
+    handler = function (e) {
+        var value;  // the value of the tag, that should be deleted
+        value = this.parentNode.getAttribute('data-value');
+        that.delete_tag(value);
+    };
+
+    return handler;
+
+};
+
+TypeaheadTaggingPlugin.prototype.handle_input_keyup = function () {
 
     // handle keyup events
     var handler;    // the event handler function
@@ -223,14 +251,13 @@ TypeaheadTaggingPlugin.prototype.handle_keyup = function (e) {
     handler = function (e) {
         if (e.keyCode === 13 || e.keyCode === 188) {
             that.add_tag(this.value);
-            this.value = '';
         }
     };
 
     return handler;
 };
 
-TypeaheadTaggingPlugin.prototype.handle_keydown = function () {
+TypeaheadTaggingPlugin.prototype.handle_input_keydown = function () {
 
     // handle keydown events
     var handler,    // the event handler function
@@ -238,6 +265,12 @@ TypeaheadTaggingPlugin.prototype.handle_keydown = function () {
     var that = this;  // for internal reference inside the handler ('this' becomes the element that causes the event)
 
     handler = function (e) {
+        if (e.keyCode === 9) {
+            if (this.value && (!that.input.parentNode.querySelector('[class*=tt-hint]').value)) {
+                e.preventDefault();
+                that.add_tag(this.value);
+            }
+        }
         if (e.keyCode === 8) {
             if (!this.value) {
                 // when backspace is pressed in an empty input, remove the last tag
@@ -279,6 +312,7 @@ TypeaheadTaggingPlugin.prototype.init_typeahead = function (tagsource) {
     // initialize typeahead for the input
     if (tagsource) {
 
+
         $(this.input).typeahead(
             {
                 hint     : true,
@@ -303,11 +337,17 @@ TypeaheadTaggingPlugin.prototype.set_taglist = function (taglist) {
 };
 
 TypeaheadTaggingPlugin.prototype.substringMatcher = function (tagsource) {
+
+    var that = this;
+
     return function findMatches(q, cb) {
-        var matches, substrRegex;
+        var matches, substrRegex, values, taglist;
 
         // an array that will be populated with substring matches
         matches = [];
+
+        // the values left for completion. Excludes the ones already being set as value on the input.
+        values = [];
 
         // regex used to determine if a string contains the
         // substring `q`
@@ -316,7 +356,14 @@ TypeaheadTaggingPlugin.prototype.substringMatcher = function (tagsource) {
         // iterate through the pool of strings and for any string
         // that contains the substring `q`, add it to the `matches`
         // array
-        $.each(tagsource, function (i, str) {
+        taglist = that.get_taglist();
+        for (var i = 0; i < tagsource.length; i++) {
+            if (taglist.indexOf(tagsource[i]) === -1) {
+                values.push(tagsource[i]);
+            }
+        }
+
+        $.each(values, function (i, str) {
             if (substrRegex.test(str)) {
                 matches.push({value: str});
             }
