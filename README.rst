@@ -40,3 +40,43 @@ amount as data attribute.
 
 
 The value of the input will be all tags separated by comma. E.g. ``Foo,Bar``.
+
+
+Plugin API
+----------
+
+All the following assumes, that the plugin was initialized with something like
+``$('#foobar').tagging(['list', 'of', 'tags'])``.
+
+
+Getting the plugin intance
+++++++++++++++++++++++++++
+
+Returns the plugin instance, that is stored on the element.
+
+.. code-block:: javascript
+
+    var plugin = $('#foobar').tagging();
+    >> TypeaheadTaggingPlugin {element: input#foobar, input: input.tagging_li_new_input.tt-input, ul: ul.tagging_ul…}
+
+
+Clearing the input
+++++++++++++++++++
+
+Sets the value of the input to be blank and removes all tags.
+
+.. code-block:: javascript
+
+    var plugin = $('#foobar').tagging('clear');
+
+
+Getting and setting a value
++++++++++++++++++++++++++++
+
+Either returns a value or if provided with an array of strings, sets the value on the input and creates the tags.
+
+.. code-block:: javascript
+
+    $('#foobar').tagging('value', ['this', 'is', 'the', 'new', 'value'];
+    $('#foobar').tagging('value').
+    >> ['this', 'is', 'the', 'new', 'value']

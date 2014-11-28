@@ -3,13 +3,16 @@
 div.tagging_wrapper {
     ul.tagging_ul {
         .form-control;
+        height: auto;
         list-style: none;
+        cursor: text;
         li.tagging_li {
             .btn;
             .btn-primary;
             .btn-xs;
             cursor: default;
             margin-right: 2px;
+            margin-bottom: 2px;
             span.tagging_delete_tag {
                 margin-left: 2px;
                 padding: 4px 2px;
@@ -20,6 +23,9 @@ div.tagging_wrapper {
             span.tagging_delete_tag:active {
                 color: lighten(@text-color, 30%);
             }
+        }
+        li.tagging_li:hover {
+            background: @brand-primary;
         }
         li.tagging_li_new {
             display: inline;

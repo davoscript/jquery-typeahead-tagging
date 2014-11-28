@@ -6220,7 +6220,9 @@ div.tagging_wrapper ul.tagging_ul {
   -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
   -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
   transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  height: auto;
   list-style: none;
+  cursor: text;
 }
 div.tagging_wrapper ul.tagging_ul:focus {
   border-color: #66afe9;
@@ -6276,6 +6278,7 @@ div.tagging_wrapper ul.tagging_ul li.tagging_li {
   border-radius: 3px;
   cursor: default;
   margin-right: 2px;
+  margin-bottom: 2px;
 }
 div.tagging_wrapper ul.tagging_ul li.tagging_li:focus,
 div.tagging_wrapper ul.tagging_ul li.tagging_li:active:focus,
@@ -6359,6 +6362,9 @@ div.tagging_wrapper ul.tagging_ul li.tagging_li span.tagging_delete_tag {
 div.tagging_wrapper ul.tagging_ul li.tagging_li span.tagging_delete_tag:hover,
 div.tagging_wrapper ul.tagging_ul li.tagging_li span.tagging_delete_tag:active {
   color: #808080;
+}
+div.tagging_wrapper ul.tagging_ul li.tagging_li:hover {
+  background: #428bca;
 }
 div.tagging_wrapper ul.tagging_ul li.tagging_li_new {
   display: inline;
