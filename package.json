@@ -1,0 +1,15 @@
+{
+    "name": "jquery-typeahead-tagging",
+    "version": "0.3.0",
+    "repository": {
+        "type": "git",
+        "url": "http://github.com/bitmazk/jquery-typeahead-tagging.git"
+    },
+    "devDependencies": {
+        "grunt": "*",
+        "grunt-contrib-less": "*",
+        "grunt-contrib-jshint": "*",
+        "grunt-contrib-uglify": "*",
+        "grunt-contrib-watch": "*"
+    }
+}
